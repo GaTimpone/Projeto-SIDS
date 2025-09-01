@@ -71,9 +71,6 @@ CREATE TABLE pessoas (
     email VARCHAR(100) NOT NULL
 );
 
-
-Crie usuário (opcional, mas recomendado):
-
 CREATE USER 'cruduser'@'localhost' IDENTIFIED BY 'senha123';
 GRANT ALL PRIVILEGES ON crud_php.* TO 'cruduser'@'localhost';
 FLUSH PRIVILEGES;
@@ -89,169 +86,32 @@ cd meu_crud
 Crie o arquivo de conexão db.php
 sudo nano db.php
 
-Cole:
+Cole o conteudo do arquivo db.php
 
-<?php
-$host = "localhost";
-$user = "cruduser";
-$pass = "senha123";
-$db   = "crud_php";
-
-$conn = new mysqli($host, $user, $pass, $db);
-
-if ($conn->connect_error) {
-    die("Falha na conexão: " . $conn->connect_error);
-}
-?>
-
-
-Salvar e sair (CTRL+O, ENTER, CTRL+X).
+Salvar e sair == (CTRL+O, ENTER, CTRL+X).
 
 Crie a página inicial index.php
 sudo nano index.php
 
-Cole:
-
-<?php include 'db.php'; ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>CRUD PHP + MariaDB</title>
-</head>
-<body>
-    <h2>Lista de Pessoas</h2>
-    <a href="create.php">Adicionar Nova Pessoa</a>
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>ID</th><th>Nome</th><th>Idade</th><th>Email</th><th>Ações</th>
-        </tr>
-        <?php
-        $sql = "SELECT * FROM pessoas";
-        $result = $conn->query($sql);
-
-        while($row = $result->fetch_assoc()){
-            echo "<tr>
-                <td>".$row['id']."</td>
-                <td>".$row['nome']."</td>
-                <td>".$row['idade']."</td>
-                <td>".$row['email']."</td>
-                <td>
-                    <a href='update.php?id=".$row['id']."'>Editar</a> |
-                    <a href='delete.php?id=".$row['id']."' onclick='return confirm(\"Deseja excluir?\")'>Excluir</a>
-                </td>
-            </tr>";
-        }
-        ?>
-    </table>
-</body>
-</html>
+Cole o conteudo do arquivo index.php
 
 Crie create.php (inserir)
 sudo nano create.php
 
 
-Cole:
-
-<?php include 'db.php'; ?>
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Adicionar Pessoa</title>
-</head>
-<body>
-    <h2>Adicionar Pessoa</h2>
-    <form method="POST">
-        Nome: <input type="text" name="nome" required><br><br>
-        Idade: <input type="number" name="idade" required><br><br>
-        Email: <input type="email" name="email" required><br><br>
-        <button type="submit">Salvar</button>
-    </form>
-    <br><a href="index.php">Voltar</a>
-</body>
-</html>
-
-<?php
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $nome = $_POST['nome'];
-    $idade = $_POST['idade'];
-    $email = $_POST['email'];
-
-    $sql = "INSERT INTO pessoas (nome, idade, email) VALUES ('$nome', '$idade', '$email')";
-    if($conn->query($sql) === TRUE){
-        echo "<p>Registro adicionado com sucesso!</p>";
-    } else {
-        echo "<p>Erro: " . $conn->error . "</p>";
-    }
-}
-?>
+Cole o conteudo do arquivo create.php
 
 Crie update.php (editar)
 sudo nano update.php
 
 
-Cole:
-
-<?php include 'db.php'; ?>
-
-<?php
-$id = $_GET['id'];
-$sql = "SELECT * FROM pessoas WHERE id=$id";
-$result = $conn->query($sql);
-$pessoa = $result->fetch_assoc();
-
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $nome = $_POST['nome'];
-    $idade = $_POST['idade'];
-    $email = $_POST['email'];
-
-    $sql = "UPDATE pessoas SET nome='$nome', idade='$idade', email='$email' WHERE id=$id";
-    if($conn->query($sql) === TRUE){
-        echo "<p>Registro atualizado!</p>";
-    } else {
-        echo "<p>Erro: " . $conn->error . "</p>";
-    }
-}
-?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Pessoa</title>
-</head>
-<body>
-    <h2>Editar Pessoa</h2>
-    <form method="POST">
-        Nome: <input type="text" name="nome" value="<?php echo $pessoa['nome']; ?>" required><br><br>
-        Idade: <input type="number" name="idade" value="<?php echo $pessoa['idade']; ?>" required><br><br>
-        Email: <input type="email" name="email" value="<?php echo $pessoa['email']; ?>" required><br><br>
-        <button type="submit">Atualizar</button>
-    </form>
-    <br><a href="index.php">Voltar</a>
-</body>
-</html>
+Cole o conteudo do arquivo update.php
 
 Crie delete.php (excluir)
 sudo nano delete.php
 
 
-Cole:
-
-<?php include 'db.php'; ?>
-
-<?php
-$id = $_GET['id'];
-$sql = "DELETE FROM pessoas WHERE id=$id";
-if($conn->query($sql) === TRUE){
-    echo "<p>Registro excluído!</p>";
-} else {
-    echo "<p>Erro: " . $conn->error . "</p>";
-}
-?>
-
-<br><a href="index.php">Voltar</a>
+Coleo conteudo do arquivo delete.php
 
 Ajuste permissões (para o Apache ler os arquivos)
 sudo chown -R www-data:www-data /var/www/html/meu_crud
